@@ -1,0 +1,626 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#B5862B;--gold2:#D4A84B;--clay:#8B3A2A;--sand:#F0E6D3;
+  --stone:#2C2419;--cream:#FAF6F0;--tav:#1E4A7A;--sage:#6B7B5E;
+  --border:rgba(181,134,43,0.2);--font:'DM Sans',sans-serif;
+  --r-rec:#1E4A7A;--r-adm:#8B3A2A;--r-limp:#6B7B5E;--r-mant:#5A4A2A;--r-ger:#B5862B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--cream);color:var(--stone)}
+
+/* TOPBAR */
+.topbar{background:var(--stone);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:48px;gap:8px;flex-wrap:wrap}
+.logo{font-family:'Cormorant Garamond',serif;color:var(--gold);font-size:16px;font-weight:600;letter-spacing:.06em;white-space:nowrap}
+.nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;justify-content:center}
+.nav::-webkit-scrollbar{display:none}
+.nb{background:none;border:none;color:rgba(240,230,211,.5);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 9px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;font-family:var(--font);transition:all .2s}
+.nb.on{color:var(--gold);border-bottom-color:var(--gold)}
+.nb:hover{color:rgba(240,230,211,.85)}
+.nb.locked{color:rgba(240,230,211,.2);cursor:not-allowed}
+
+/* ROLE SELECTOR */
+.role-bar{background:#1E1610;display:flex;align-items:center;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.rb-label{font-size:10px;color:rgba(240,230,211,.4);letter-spacing:.1em;text-transform:uppercase}
+.rbtn{padding:5px 13px;border:none;font-size:11px;letter-spacing:.06em;cursor:pointer;font-family:var(--font);font-weight:500;transition:all .2s;border-bottom:2px solid transparent}
+.rbtn.on{border-bottom-width:2px}
+.rbtn[data-r="rec"]{background:rgba(30,74,122,.15);color:#6BA3D6}
+.rbtn[data-r="rec"].on{background:rgba(30,74,122,.35);color:#A8C8F0;border-bottom-color:#6BA3D6}
+.rbtn[data-r="adm"]{background:rgba(139,58,42,.15);color:#D4856A}
+.rbtn[data-r="adm"].on{background:rgba(139,58,42,.35);color:#F0A898;border-bottom-color:#D4856A}
+.rbtn[data-r="limp"]{background:rgba(107,123,94,.15);color:#9AB58A}
+.rbtn[data-r="limp"].on{background:rgba(107,123,94,.35);color:#BDD4AD;border-bottom-color:#9AB58A}
+.rbtn[data-r="mant"]{background:rgba(90,74,42,.15);color:#B8A878}
+.rbtn[data-r="mant"].on{background:rgba(90,74,42,.35);color:#D4C89A;border-bottom-color:#B8A878}
+.rbtn[data-r="ger"]{background:rgba(181,134,43,.15);color:#D4A84B}
+.rbtn[data-r="ger"].on{background:rgba(181,134,43,.3);color:#F0C870;border-bottom-color:#D4A84B}
+.role-badge{font-size:10px;padding:2px 10px;letter-spacing:.07em;text-transform:uppercase;margin-left:auto;border-radius:2px}
+
+/* ACCESS NOTICE */
+.access-notice{display:none;background:rgba(139,58,42,.12);border:1px solid rgba(139,58,42,.3);color:#D4856A;font-size:11px;padding:10px 16px;margin:12px 16px;letter-spacing:.03em}
+.access-notice.show{display:block}
+
+/* SCREENS */
+.screen{display:none}.screen.on{display:block}
+.pg-label{font-size:9px;color:rgba(181,134,43,.5);letter-spacing:.15em;text-transform:uppercase;padding:4px 16px;background:var(--sand);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.pg-roles{display:flex;gap:4px}
+.pg-role-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* TABLES & LAYOUT */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:14px 16px}
+.sc{background:var(--cream);padding:12px 14px}
+.sc-n{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--stone);font-weight:600}
+.sc-l{font-size:10px;color:#999;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.sc-s{font-size:11px;margin-top:3px}
+.two-col{display:grid;grid-template-columns:1fr 270px}
+.main-col{border-right:1px solid var(--border);padding:14px 16px}
+.side-col{padding:14px;background:var(--sand)}
+.side-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--stone);margin-bottom:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#bbb;padding:7px 8px;border-bottom:1px solid var(--border);font-weight:400}
+.tbl td{padding:9px 8px;border-bottom:1px solid rgba(181,134,43,.08);vertical-align:middle}
+.tbl tr:hover td{background:var(--sand)}
+.tbl tr.sel td{background:rgba(181,134,43,.07)}
+.dr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.dl{color:#999}.dv{color:var(--stone);font-weight:500;text-align:right}
+.filter-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.fp{background:white;border:1px solid var(--border);font-size:11px;color:var(--stone);padding:4px 10px;cursor:pointer;letter-spacing:.04em;font-family:var(--font)}
+.fp.on{background:var(--stone);color:var(--gold);border-color:var(--stone)}
+.srch{border:1px solid var(--border);background:white;padding:6px 10px;font-size:12px;font-family:var(--font);color:var(--stone);outline:none;flex:1;max-width:200px}
+.add-btn{background:var(--gold);color:var(--stone);border:none;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;font-family:var(--font);font-weight:500;white-space:nowrap}
+.add-btn:disabled{background:#ccc;color:#888;cursor:not-allowed}
+.pill{display:inline-block;padding:2px 8px;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+.p-disp{background:#EAF3DE;color:#3B6D11}.p-ocu{background:#FAEEDA;color:#854F0B}
+.p-conf{background:#EAF3DE;color:#3B6D11}.p-pend{background:#FAEEDA;color:#854F0B}
+.p-ci{background:#E6F1FB;color:#185FA5}.p-co{background:#F1EFE8;color:#5F5E5A}
+.p-fact{background:#EEEDFE;color:#534AB7}.p-limp{background:#FBEAF0;color:#993556}
+.sab{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.sb{padding:8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;font-family:var(--font);text-align:center;width:100%;border:none}
+.sb-p{background:var(--stone);color:var(--gold)}.sb-s{background:transparent;color:var(--stone);border:1px solid var(--border)!important}
+.sb-d{background:transparent;color:var(--clay);border:1px solid rgba(139,58,42,.3)!important}
+.sb:disabled{opacity:.35;cursor:not-allowed}
+.fg{display:flex;flex-direction:column;gap:4px}.fl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#aaa}
+.fi,.fs{border:1px solid var(--border);background:white;padding:7px 10px;font-size:12px;color:var(--stone);font-family:var(--font);outline:none;width:100%}
+.fi:disabled,.fs:disabled{background:#f5f0e8;color:#bbb;cursor:not-allowed}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fg.full{grid-column:1/-1}
+.sec-head{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);padding-bottom:5px;border-bottom:1px solid var(--border);margin:12px 0 9px}
+.act-btn{background:none;border:1px solid var(--border);padding:3px 8px;font-size:10px;cursor:pointer;font-family:var(--font);color:var(--stone)}
+.act-btn:hover{background:var(--stone);color:var(--gold)}
+.act-btn:disabled{opacity:.3;cursor:not-allowed}
+.locked-field{position:relative}
+.lock-icon{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#bbb}
+.perm-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.perm-table th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#aaa;padding:6px 8px;border-bottom:1px solid var(--border);font-weight:400}
+.perm-table td{padding:8px;border-bottom:1px solid rgba(181,134,43,.08);text-align:center}
+.perm-table td:first-child{text-align:left;font-weight:500}
+.chk{color:var(--sage);font-size:14px}.no{color:#ddd;font-size:14px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar-label{font-size:10px;color:#888;min-width:80px;text-align:right}
+.bar-bg{flex:1;height:7px;background:var(--sand)}
+.bar-fill{height:7px;background:var(--gold)}
+.bar-val{font-size:10px;color:var(--stone);font-weight:500;min-width:35px}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--sand);padding:10px}
+.kpi-n{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--stone)}
+.kpi-l{font-size:10px;color:#aaa;letter-spacing:.06em;text-transform:uppercase}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px}
+.rep-card{background:white;border:1px solid var(--border);padding:14px}
+.rep-title{font-size:11px;font-weight:500;color:var(--stone);letter-spacing:.04em;margin-bottom:10px}
+.hab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 16px}
+.hcard{background:white;border:1px solid var(--border);padding:10px;cursor:pointer}
+.hcard:hover{border-color:var(--gold)}
+.hc-num{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--stone);font-weight:600}
+.hc-tipo{font-size:10px;color:#aaa;letter-spacing:.05em;text-transform:uppercase}
+.hc-info{font-size:11px;color:#888;margin-top:4px}
+.readonly-notice{font-size:10px;color:var(--sage);background:rgba(107,123,94,.1);border:1px solid rgba(107,123,94,.25);padding:6px 10px;margin-bottom:10px;letter-spacing:.03em}
+</style>
+
+<div style="font-family:'DM Sans',sans-serif;background:var(--cream);min-height:600px">
+<div class="topbar">
+  <div class="logo">Mirador Puebla Suites</div>
+  <div class="nav">
+    <button class="nb on" onclick="go('login')">Login</button>
+    <button class="nb" id="nb-huespedes" onclick="go('huespedes')">Huéspedes</button>
+    <button class="nb" id="nb-reserv" onclick="go('reserv')">Reservaciones</button>
+    <button class="nb" id="nb-checkin" onclick="go('checkin')">Check-in</button>
+    <button class="nb" id="nb-checkout" onclick="go('checkout')">Check-out</button>
+    <button class="nb" id="nb-hab" onclick="go('hab')">Habitaciones</button>
+    <button class="nb" id="nb-servicios" onclick="go('servicios')">Servicios</button>
+    <button class="nb" id="nb-consumos" onclick="go('consumos')">Consumos</button>
+    <button class="nb" id="nb-factura" onclick="go('factura')">Factura</button>
+    <button class="nb" id="nb-reportes" onclick="go('reportes')">Reportes</button>
+  </div>
+</div>
+
+<div class="role-bar">
+  <span class="rb-label">Rol activo:</span>
+  <button class="rbtn" data-r="rec" onclick="setRole('rec')">Recepcionista</button>
+  <button class="rbtn" data-r="adm" onclick="setRole('adm')">Administrador</button>
+  <button class="rbtn" data-r="limp" onclick="setRole('limp')">Personal Limpieza</button>
+  <button class="rbtn" data-r="mant" onclick="setRole('mant')">Personal Mantenimiento</button>
+  <button class="rbtn" data-r="ger" onclick="setRole('ger')">Gerente</button>
+  <span class="role-badge" id="role-badge" style="background:rgba(181,134,43,.15);color:var(--gold)">Selecciona un rol</span>
+</div>
+
+<div class="access-notice" id="access-notice">🔒 Este módulo no está disponible para tu rol actual.</div>
+
+<!-- LOGIN -->
+<div class="screen on" id="s-login">
+  <div class="pg-label"><span>Login · acceso al sistema</span><div class="pg-roles"><span class="pg-role-dot" style="background:#6BA3D6" title="Recepcionista"></span><span class="pg-role-dot" style="background:#D4856A" title="Administrador"></span><span class="pg-role-dot" style="background:#9AB58A" title="Limpieza"></span><span class="pg-role-dot" style="background:#B8A878" title="Mantenimiento"></span><span class="pg-role-dot" style="background:#D4A84B" title="Gerente"></span></div></div>
+  <div style="max-width:360px;margin:40px auto;background:white;border:1px solid var(--border);padding:28px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--stone);margin-bottom:4px;text-align:center">Bienvenido</div>
+    <div style="font-size:11px;color:#aaa;text-align:center;margin-bottom:20px;letter-spacing:.04em">Sistema de Gestión Hotelera</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="fg"><div class="fl">Usuario</div><input class="fi" placeholder="usuario@miradorpuebla.mx" /></div>
+      <div class="fg"><div class="fl">Contraseña</div><input class="fi" type="password" placeholder="••••••••" /></div>
+      <div class="fg"><div class="fl">Rol</div>
+        <select class="fs" onchange="setRoleFromLogin(this.value)">
+          <option value="">— Selecciona tu rol —</option>
+          <option value="rec">Recepcionista</option>
+          <option value="adm">Administrador</option>
+          <option value="limp">Personal de Limpieza</option>
+          <option value="mant">Personal de Mantenimiento</option>
+          <option value="ger">Gerente</option>
+        </select>
+      </div>
+      <button class="add-btn" style="padding:10px;margin-top:6px;width:100%;font-size:12px" onclick="loginAction()">Iniciar sesión</button>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+      <div style="font-size:10px;color:#aaa;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Acceso rápido por rol:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        <button class="rbtn" data-r="rec" onclick="quickLogin('rec')" style="font-size:10px;padding:4px 9px">Recepcionista</button>
+        <button class="rbtn" data-r="adm" onclick="quickLogin('adm')" style="font-size:10px;padding:4px 9px">Administrador</button>
+        <button class="rbtn" data-r="limp" onclick="quickLogin('limp')" style="font-size:10px;padding:4px 9px">Limpieza</button>
+        <button class="rbtn" data-r="mant" onclick="quickLogin('mant')" style="font-size:10px;padding:4px 9px">Mantenimiento</button>
+        <button class="rbtn" data-r="ger" onclick="quickLogin('ger')" style="font-size:10px;padding:4px 9px">Gerente</button>
+      </div>
+    </div>
+  </div>
+  <!-- MATRIZ DE PERMISOS -->
+  <div style="max-width:680px;margin:0 auto 30px;padding:0 16px">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--stone);margin-bottom:10px">Matriz de accesos por rol</div>
+    <table class="perm-table">
+      <thead><tr><th>Módulo</th><th style="color:#6BA3D6">Recep.</th><th style="color:#D4856A">Admin.</th><th style="color:#9AB58A">Limpieza</th><th style="color:#B8A878">Mantenimiento</th><th style="color:#D4A84B">Gerente</th></tr></thead>
+      <tbody>
+        <tr><td>🔑 Login</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td></tr>
+        <tr><td>👤 Huéspedes</td><td class="chk">✓</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>📋 Reservaciones</td><td class="chk">✓</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>🏨 Check-in</td><td class="chk">✓</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>🚪 Check-out</td><td class="chk">✓</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>🛏 Habitaciones</td><td class="no">—</td><td class="chk">✓</td><td style="color:#9AB58A;font-size:12px">Ver</td><td style="color:#B8A878;font-size:12px">Ver</td><td class="no">—</td></tr>
+        <tr><td>🧹 Servicios</td><td class="no">—</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td class="no">—</td></tr>
+        <tr><td>🍽 Consumos</td><td class="no">—</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>🧾 Factura</td><td class="no">—</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>📊 Reportes</td><td class="no">—</td><td class="chk">✓</td><td class="no">—</td><td class="no">—</td><td class="chk">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- HUÉSPEDES -->
+<div class="screen" id="s-huespedes">
+  <div class="pg-label"><span>Huéspedes · CRUD_huespedes</span><div class="pg-roles"><span class="pg-role-dot" style="background:#6BA3D6" title="Recepcionista"></span><span class="pg-role-dot" style="background:#D4856A" title="Administrador"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div class="filter-row">
+        <input class="srch" placeholder="Buscar nombre, correo, ID…"/>
+        <button class="fp on">Todos</button><button class="fp">Activos</button><button class="fp">VIP</button>
+        <button class="add-btn" id="btn-nuevo-huesped" style="margin-left:auto">+ Nuevo huésped</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Nombre completo</th><th>Teléfono</th><th>Correo</th><th>Identificación</th><th>Nacionalidad</th><th></th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>María González Ruiz</td><td>222 100 0001</td><td>maria@email.com</td><td>INE 0001</td><td>Mexicana</td><td><button class="act-btn">Ver</button></td></tr>
+          <tr><td>2</td><td>Carlos Mendoza López</td><td>222 100 0002</td><td>cmendoza@mail.mx</td><td>INE 0002</td><td>Mexicana</td><td><button class="act-btn">Ver</button></td></tr>
+          <tr><td>3</td><td>Sofía Ramírez Vega</td><td>222 100 0003</td><td>sofia@corp.mx</td><td>Pasaporte MX003</td><td>Mexicana</td><td><button class="act-btn">Ver</button></td></tr>
+          <tr><td>4</td><td>John Williams</td><td>+1 555 0004</td><td>jwilliams@usa.com</td><td>Pasaporte US004</td><td>Estadounidense</td><td><button class="act-btn">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="side-col">
+      <div class="side-title">María González Ruiz</div>
+      <div class="dr"><span class="dl">id_huesped</span><span class="dv">1</span></div>
+      <div class="dr"><span class="dl">Nombre</span><span class="dv">María</span></div>
+      <div class="dr"><span class="dl">Ap. Paterno</span><span class="dv">González</span></div>
+      <div class="dr"><span class="dl">Ap. Materno</span><span class="dv">Ruiz</span></div>
+      <div class="dr"><span class="dl">Teléfono</span><span class="dv">222 100 0001</span></div>
+      <div class="dr"><span class="dl">Correo</span><span class="dv" style="font-size:11px">maria@email.com</span></div>
+      <div class="dr"><span class="dl">Identificación</span><span class="dv">INE 0001</span></div>
+      <div class="dr"><span class="dl">Nacionalidad</span><span class="dv">Mexicana</span></div>
+      <div class="sab">
+        <button class="sb sb-p" id="btn-editar-huesped">Editar datos</button>
+        <button class="sb sb-s">Ver reservaciones</button>
+        <button class="sb sb-d" id="btn-eliminar-huesped">Eliminar huésped</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESERVACIONES -->
+<div class="screen" id="s-reserv">
+  <div class="pg-label"><span>Reservaciones · CRUD_reservacion (include → CRUD_huespedes)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#6BA3D6"></span><span class="pg-role-dot" style="background:#D4856A"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div class="filter-row">
+        <button class="fp on">Todas</button><button class="fp">Confirmadas</button><button class="fp">Pendientes</button><button class="fp">Hoy</button>
+        <button class="add-btn" id="btn-nueva-res" style="margin-left:auto">+ Nueva reservación</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>#</th><th>Huésped</th><th>Tipo hab.</th><th>Entrada</th><th>Salida</th><th>Huéspedes</th><th>Pago</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>María González</td><td>Suite</td><td>06/06</td><td>09/06</td><td>2</td><td>Tarjeta</td><td><span class="pill p-ci">Check-in</span></td><td><button class="act-btn" id="btn-edit-res">Editar</button></td></tr>
+          <tr><td>2</td><td>Carlos Mendoza</td><td>Deluxe</td><td>07/06</td><td>08/06</td><td>1</td><td>Efectivo</td><td><span class="pill p-conf">Confirmada</span></td><td><button class="act-btn" id="btn-edit-res2">Editar</button></td></tr>
+          <tr><td>3</td><td>Sofía Ramírez</td><td>Penthouse</td><td>08/06</td><td>12/06</td><td>3</td><td>Transferencia</td><td><span class="pill p-conf">Confirmada</span></td><td><button class="act-btn">Editar</button></td></tr>
+          <tr><td>4</td><td>John Williams</td><td>Estándar</td><td>10/06</td><td>14/06</td><td>2</td><td>Tarjeta</td><td><span class="pill p-pend">Pendiente</span></td><td><button class="act-btn">Editar</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Reservación #1</div>
+      <div class="dr"><span class="dl">id_reservacion</span><span class="dv">1</span></div>
+      <div class="dr"><span class="dl">Huésped</span><span class="dv">María González</span></div>
+      <div class="dr"><span class="dl">Tipo habitación</span><span class="dv">Suite</span></div>
+      <div class="dr"><span class="dl">Fecha entrada</span><span class="dv">2025-06-06</span></div>
+      <div class="dr"><span class="dl">Fecha salida</span><span class="dv">2025-06-09</span></div>
+      <div class="dr"><span class="dl">Cant. huéspedes</span><span class="dv">2</span></div>
+      <div class="dr"><span class="dl">Tipo pago</span><span class="dv">Tarjeta</span></div>
+      <div class="dr"><span class="dl">Habitación asig.</span><span class="dv" style="color:var(--gold)">No. 101</span></div>
+      <div class="sab">
+        <button class="sb sb-p" onclick="go('checkin')">Hacer check-in</button>
+        <button class="sb sb-s" id="btn-mod-res">Modificar reservación</button>
+        <button class="sb sb-d" id="btn-cancel-res">Cancelar reservación</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECK-IN -->
+<div class="screen" id="s-checkin">
+  <div class="pg-label"><span>Check-in · CRUD_check_in</span><div class="pg-roles"><span class="pg-role-dot" style="background:#6BA3D6"></span><span class="pg-role-dot" style="background:#D4856A"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px">Llegadas del día — selecciona para procesar</div>
+      <table class="tbl">
+        <thead><tr><th>#Res</th><th>Huésped</th><th>Habitación</th><th>Hora est.</th><th>Noches</th><th>Huéspedes</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>María González</td><td>101 · Suite</td><td>15:00</td><td>3</td><td>2</td><td><span class="pill p-ci">Listo</span></td><td><button class="act-btn" id="btn-ci-1">Check-in</button></td></tr>
+          <tr><td>2</td><td>Carlos Mendoza</td><td>204 · Deluxe</td><td>17:00</td><td>1</td><td>1</td><td><span class="pill p-pend">Pendiente</span></td><td><button class="act-btn" id="btn-ci-2">Check-in</button></td></tr>
+          <tr><td>3</td><td>Sofía Ramírez</td><td>401 · Penthouse</td><td>18:00</td><td>4</td><td>3</td><td><span class="pill p-pend">Pendiente</span></td><td><button class="act-btn" id="btn-ci-3">Check-in</button></td></tr>
+        </tbody>
+      </table>
+      <div class="sec-head">Registrar check-in · INSERT INTO Checks</div>
+      <div class="form-grid">
+        <div class="fg"><div class="fl">No_Reservacion *</div><input class="fi" value="1" id="fi-ci-nores"/></div>
+        <div class="fg"><div class="fl">No_Habitacion *</div><input class="fi" value="101" id="fi-ci-nohab"/></div>
+        <div class="fg"><div class="fl">Fecha_check_in *</div><input class="fi" type="date" id="fi-ci-fecha"/></div>
+        <div class="fg"><div class="fl">Observaciones</div><input class="fi" placeholder="Notas de llegada…" id="fi-ci-obs"/></div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Confirmar check-in</div>
+      <div class="dr"><span class="dl">No_Habitacion</span><span class="dv">101</span></div>
+      <div class="dr"><span class="dl">No_Reservacion</span><span class="dv">1</span></div>
+      <div class="dr"><span class="dl">Huésped</span><span class="dv">María González</span></div>
+      <div class="dr"><span class="dl">Fecha_check_in</span><span class="dv">2025-06-06</span></div>
+      <div class="dr"><span class="dl">Fecha_check_out</span><span class="dv" style="color:#bbb">NULL</span></div>
+      <div class="dr"><span class="dl">No_noches</span><span class="dv" style="color:#bbb">NULL</span></div>
+      <div class="dr"><span class="dl">Extras</span><span class="dv" style="color:#bbb">NULL</span></div>
+      <div class="dr"><span class="dl">Total</span><span class="dv" style="color:#bbb">NULL</span></div>
+      <div class="sab">
+        <button class="sb sb-p" id="btn-confirmar-ci">Confirmar check-in</button>
+        <button class="sb sb-s">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECK-OUT -->
+<div class="screen" id="s-checkout">
+  <div class="pg-label"><span>Check-out · CRUD_check_out (extend → CRUD_factura · extend → CRUD_consumos)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#6BA3D6"></span><span class="pg-role-dot" style="background:#D4856A"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div style="font-size:11px;color:#aaa;margin-bottom:10px">Huéspedes con check-in activo</div>
+      <table class="tbl">
+        <thead><tr><th>id_check</th><th>Hab.</th><th>Huésped</th><th>Check-in</th><th>Check-out prev.</th><th>Noches</th><th>Consumos</th><th>Total est.</th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>101</td><td>María González</td><td>06/06</td><td>09/06</td><td>3</td><td>$0</td><td style="color:var(--gold);font-weight:500">$8,400</td></tr>
+          <tr><td>2</td><td>305</td><td>Roberto Díaz</td><td>04/06</td><td>06/06</td><td>2</td><td>$350</td><td style="color:var(--gold);font-weight:500">$4,150</td></tr>
+        </tbody>
+      </table>
+      <div class="sec-head">Datos de salida · UPDATE Checks</div>
+      <div class="form-grid">
+        <div class="fg"><div class="fl">Fecha_check_out *</div><input class="fi" type="date" value="2025-06-09" id="fi-co-fecha"/></div>
+        <div class="fg"><div class="fl">No_noches (calculado)</div><input class="fi" value="3" readonly/></div>
+        <div class="fg"><div class="fl">Extras (Consumos)</div><input class="fi" type="number" placeholder="0.00" id="fi-co-extras"/></div>
+        <div class="fg"><div class="fl">Total final</div><input class="fi" value="$8,400.00" readonly/></div>
+      </div>
+      <div style="font-size:10px;color:#aaa;margin-top:8px;line-height:1.6">Al confirmar → Habitaciones.Estado = "Limpieza" · Se extiende a CRUD_factura y CRUD_consumos (solo Administrador)</div>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Check-out Hab. 101</div>
+      <div class="dr"><span class="dl">Huésped</span><span class="dv">María González</span></div>
+      <div class="dr"><span class="dl">Noches</span><span class="dv">3</span></div>
+      <div class="dr"><span class="dl">Costo/noche</span><span class="dv">$2,800</span></div>
+      <div class="dr"><span class="dl">Subtotal</span><span class="dv">$8,400</span></div>
+      <div class="dr"><span class="dl">Extras</span><span class="dv">$0.00</span></div>
+      <div class="dr"><span class="dl">IVA 16%</span><span class="dv" id="co-iva">$1,344.00</span></div>
+      <div class="dr"><span class="dl" style="font-weight:500">Total</span><span class="dv" style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:20px">$9,744.00</span></div>
+      <div class="sab">
+        <button class="sb sb-p" id="btn-confirmar-co">Confirmar checkout</button>
+        <button class="sb sb-s" id="btn-gen-factura" onclick="go('factura')">Generar factura</button>
+        <button class="sb sb-s" id="btn-ver-consumos" onclick="go('consumos')">Ver consumos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HABITACIONES -->
+<div class="screen" id="s-hab">
+  <div class="pg-label"><span>Habitaciones · CRUD_habitacion (Admin) / Visualizar_habitaciones (Limpieza, Mantenimiento)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#D4856A"></span><span class="pg-role-dot" style="background:#9AB58A"></span><span class="pg-role-dot" style="background:#B8A878"></span></div></div>
+  <div id="hab-readonly-notice" class="readonly-notice" style="margin:10px 16px;display:none">👁 Modo visualización — solo puedes ver el estado de las habitaciones, no editarlas.</div>
+  <div class="hab-grid">
+    <div class="hcard"><div class="hc-tipo">Suite</div><div class="hc-num">101</div><div class="hc-info">Cap. 2 · $2,800/noche</div><span class="pill p-ocu" style="margin-top:6px;display:inline-block">Ocupada</span></div>
+    <div class="hcard"><div class="hc-tipo">Deluxe</div><div class="hc-num">204</div><div class="hc-info">Cap. 2 · $1,900/noche</div><span class="pill p-ci" style="margin-top:6px;display:inline-block">Check-in hoy</span></div>
+    <div class="hcard"><div class="hc-tipo">Estándar</div><div class="hc-num">305</div><div class="hc-info">Cap. 2 · $1,200/noche</div><span class="pill p-limp" style="margin-top:6px;display:inline-block">En limpieza</span></div>
+    <div class="hcard"><div class="hc-tipo">Penthouse</div><div class="hc-num">401</div><div class="hc-info">Cap. 4 · $5,500/noche</div><span class="pill p-disp" style="margin-top:6px;display:inline-block">Disponible</span></div>
+    <div class="hcard"><div class="hc-tipo">Estándar</div><div class="hc-num">102</div><div class="hc-info">Cap. 2 · $1,200/noche</div><span class="pill p-disp" style="margin-top:6px;display:inline-block">Disponible</span></div>
+    <div class="hcard"><div class="hc-tipo">Deluxe</div><div class="hc-num">203</div><div class="hc-info">Cap. 3 · $1,900/noche</div><span class="pill p-ocu" style="margin-top:6px;display:inline-block">Mantenimiento</span></div>
+    <div class="hcard" id="hcard-new" style="border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:100px;cursor:pointer"><div style="text-align:center"><div style="font-size:20px;color:var(--gold)">+</div><div style="font-size:11px;color:#bbb">Nueva habitación</div></div></div>
+  </div>
+  <div id="hab-crud-section" style="padding:0 16px 16px">
+    <div class="sec-head">Gestionar habitación seleccionada</div>
+    <div class="form-grid" style="max-width:500px">
+      <div class="fg"><div class="fl">No_Habitacion</div><input class="fi" id="fi-hab-no" value="101"/></div>
+      <div class="fg"><div class="fl">Capacidad</div><input class="fi" id="fi-hab-cap" value="2"/></div>
+      <div class="fg"><div class="fl">Costo</div><input class="fi" id="fi-hab-costo" value="2800.00"/></div>
+      <div class="fg"><div class="fl">Estado</div><select class="fs" id="fs-hab-estado"><option>Disponible</option><option selected>Ocupada</option><option>Limpieza</option><option>Mantenimiento</option></select></div>
+      <div class="fg full"><div class="fl">Tipo habitación (id_tipo_habitacion)</div><select class="fs" id="fs-hab-tipo"><option>1 · Suite</option><option>2 · Deluxe</option><option>3 · Estándar</option><option>4 · Penthouse</option></select></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="add-btn" id="btn-save-hab">Guardar cambios</button>
+      <button class="sb sb-d" id="btn-del-hab" style="padding:6px 14px;width:auto">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICIOS -->
+<div class="screen" id="s-servicios">
+  <div class="pg-label"><span>Servicios · CRUD_servicios (Admin, Limpieza, Mantenimiento)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#D4856A"></span><span class="pg-role-dot" style="background:#9AB58A"></span><span class="pg-role-dot" style="background:#B8A878"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div class="filter-row">
+        <button class="fp on">Todos</button><button class="fp">Limpieza</button><button class="fp">Mantenimiento</button><button class="fp">Room service</button>
+        <button class="add-btn" id="btn-nuevo-serv" style="margin-left:auto">+ Nuevo servicio</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Fecha</th><th>Hora</th><th>Habitación</th><th>Tipo servicio</th><th>Responsable</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>06/06</td><td>09:00</td><td>101</td><td>Limpieza</td><td>Ana Sánchez</td><td><span class="pill p-pend">Pendiente</span></td><td><button class="act-btn" id="btn-edit-serv">Editar</button></td></tr>
+          <tr><td>2</td><td>06/06</td><td>10:30</td><td>203</td><td>Mantenimiento</td><td>Luis Torres</td><td><span class="pill p-ci">En proceso</span></td><td><button class="act-btn">Editar</button></td></tr>
+          <tr><td>3</td><td>06/06</td><td>11:00</td><td>305</td><td>Limpieza</td><td>Rosa Morales</td><td><span class="pill p-conf">Completado</span></td><td><button class="act-btn">Editar</button></td></tr>
+        </tbody>
+      </table>
+      <div class="sec-head" id="serv-form-head">Nuevo servicio</div>
+      <div class="form-grid" style="max-width:500px">
+        <div class="fg"><div class="fl">Habitación (id_habitacion)</div><select class="fs" id="fs-serv-hab"><option>101 · Suite</option><option>203 · Deluxe</option><option>305 · Estándar</option><option>401 · Penthouse</option></select></div>
+        <div class="fg"><div class="fl">Tipo servicio (id_tipo_servicio)</div><select class="fs" id="fs-serv-tipo"><option>1 · Limpieza</option><option>2 · Mantenimiento</option><option>3 · Room service</option></select></div>
+        <div class="fg"><div class="fl">Fecha</div><input class="fi" type="date" id="fi-serv-fecha"/></div>
+        <div class="fg"><div class="fl">Hora</div><input class="fi" type="time" id="fi-serv-hora"/></div>
+        <div class="fg full"><div class="fl">Responsable</div><input class="fi" id="fi-serv-resp" placeholder="Nombre del empleado asignado"/></div>
+      </div>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Servicio #1</div>
+      <div class="dr"><span class="dl">id_servicio</span><span class="dv">1</span></div>
+      <div class="dr"><span class="dl">id_habitacion</span><span class="dv">101</span></div>
+      <div class="dr"><span class="dl">Tipo</span><span class="dv">Limpieza</span></div>
+      <div class="dr"><span class="dl">Fecha</span><span class="dv">2025-06-06</span></div>
+      <div class="dr"><span class="dl">Hora</span><span class="dv">09:00</span></div>
+      <div class="dr"><span class="dl">Estado</span><span class="dv"><span class="pill p-pend">Pendiente</span></span></div>
+      <div class="dr"><span class="dl">Responsable</span><span class="dv">Ana Sánchez</span></div>
+      <div class="sab">
+        <button class="sb sb-p" id="btn-completar-serv">Marcar completado</button>
+        <button class="sb sb-s" id="btn-editar-serv2">Editar servicio</button>
+        <button class="sb sb-d" id="btn-elim-serv">Eliminar servicio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONSUMOS -->
+<div class="screen" id="s-consumos">
+  <div class="pg-label"><span>Consumos · CRUD_consumos (extend desde CRUD_check_out)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#D4856A"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div class="filter-row">
+        <button class="fp on">Activos</button><button class="fp">Historial</button>
+        <button class="add-btn" style="margin-left:auto">+ Agregar consumo</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Hab.</th><th>Huésped</th><th>Concepto</th><th>Fecha</th><th>Monto</th><th></th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>101</td><td>María González</td><td>Room service</td><td>07/06</td><td>$350.00</td><td><button class="act-btn">Editar</button></td></tr>
+          <tr><td>2</td><td>101</td><td>María González</td><td>Minibar</td><td>07/06</td><td>$180.00</td><td><button class="act-btn">Editar</button></td></tr>
+          <tr><td>3</td><td>305</td><td>Roberto Díaz</td><td>Estacionamiento</td><td>05/06</td><td>$200.00</td><td><button class="act-btn">Editar</button></td></tr>
+        </tbody>
+      </table>
+      <div class="sec-head">Nuevo consumo · se suma a Checks.Extras</div>
+      <div class="form-grid" style="max-width:500px">
+        <div class="fg"><div class="fl">Habitación (Checks)</div><select class="fs"><option>101 · María González</option><option>305 · Roberto Díaz</option></select></div>
+        <div class="fg"><div class="fl">Concepto</div><input class="fi" placeholder="Room service, minibar, spa…"/></div>
+        <div class="fg"><div class="fl">Monto</div><input class="fi" type="number" placeholder="0.00"/></div>
+        <div class="fg"><div class="fl">Fecha</div><input class="fi" type="date"/></div>
+      </div>
+      <button class="add-btn" style="margin-top:10px">Registrar consumo</button>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Resumen Hab. 101</div>
+      <div class="dr"><span class="dl">Huésped</span><span class="dv">María González</span></div>
+      <div class="dr"><span class="dl">Room service</span><span class="dv">$350.00</span></div>
+      <div class="dr"><span class="dl">Minibar</span><span class="dv">$180.00</span></div>
+      <div class="dr"><span class="dl">Total consumos</span><span class="dv" style="color:var(--gold)">$530.00</span></div>
+      <div style="margin-top:10px;font-size:10px;color:#aaa;line-height:1.6">Este monto se suma a <strong>Checks.Extras</strong> al momento del check-out</div>
+    </div>
+  </div>
+</div>
+
+<!-- FACTURA -->
+<div class="screen" id="s-factura">
+  <div class="pg-label"><span>Factura · CRUD_factura (extend desde CRUD_check_out)</span><div class="pg-roles"><span class="pg-role-dot" style="background:#D4856A"></span></div></div>
+  <div class="two-col">
+    <div class="main-col">
+      <div class="filter-row">
+        <button class="fp on">Por cobrar</button><button class="fp">Pagadas</button><button class="fp">Este mes</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>id_check</th><th>Huésped</th><th>Hab.</th><th>Check-in</th><th>Check-out</th><th>Noches</th><th>Extras</th><th>Total</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr class="sel"><td>1</td><td>María González</td><td>101</td><td>06/06</td><td>09/06</td><td>3</td><td>$530</td><td>$8,930</td><td><span class="pill p-fact">Por cobrar</span></td></tr>
+          <tr><td>2</td><td>Roberto Díaz</td><td>305</td><td>04/06</td><td>06/06</td><td>2</td><td>$200</td><td>$2,600</td><td><span class="pill p-conf">Pagada</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="side-col">
+      <div class="side-title">Factura — Check #1</div>
+      <div class="dr"><span class="dl">Huésped</span><span class="dv">María González</span></div>
+      <div class="dr"><span class="dl">Habitación</span><span class="dv">101 · Suite</span></div>
+      <div class="dr"><span class="dl">Noches × tarifa</span><span class="dv">3 × $2,800</span></div>
+      <div class="dr"><span class="dl">Subtotal</span><span class="dv">$8,400.00</span></div>
+      <div class="dr"><span class="dl">Consumos (Extras)</span><span class="dv">$530.00</span></div>
+      <div class="dr"><span class="dl">IVA 16%</span><span class="dv">$1,428.80</span></div>
+      <div class="dr"><span class="dl" style="font-weight:500">Total</span><span class="dv" style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:20px">$10,358.80</span></div>
+      <div class="sab">
+        <button class="sb sb-p">Generar CFDI</button>
+        <button class="sb sb-s">Registrar pago</button>
+        <button class="sb sb-s">Imprimir ticket</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTES -->
+<div class="screen" id="s-reportes">
+  <div class="pg-label"><span>Reportes · Consultar_reporte_ocupación + ingresos_mensuales + historial_huéspedes</span><div class="pg-roles"><span class="pg-role-dot" style="background:#D4856A"></span><span class="pg-role-dot" style="background:#D4A84B"></span></div></div>
+  <div class="rep-grid">
+    <div class="rep-card">
+      <div class="rep-title">📊 Reporte de ocupación</div>
+      <div class="bar-row"><span class="bar-label">Suite</span><div class="bar-bg"><div class="bar-fill" style="width:90%"></div></div><span class="bar-val">90%</span></div>
+      <div class="bar-row"><span class="bar-label">Penthouse</span><div class="bar-bg"><div class="bar-fill" style="width:75%"></div></div><span class="bar-val">75%</span></div>
+      <div class="bar-row"><span class="bar-label">Deluxe</span><div class="bar-bg"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">85%</span></div>
+      <div class="bar-row"><span class="bar-label">Estándar</span><div class="bar-bg"><div class="bar-fill" style="width:60%"></div></div><span class="bar-val">60%</span></div>
+      <div style="margin-top:8px;font-size:10px;color:#aaa">Fuente: Habitaciones.Estado + Checks</div>
+    </div>
+    <div class="rep-card">
+      <div class="rep-title">💰 Ingresos mensuales</div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-n">$184,200</div><div class="kpi-l">Total bruto</div></div>
+        <div class="kpi"><div class="kpi-n">$29,472</div><div class="kpi-l">IVA generado</div></div>
+        <div class="kpi"><div class="kpi-n">$4,386</div><div class="kpi-l">Promedio/estancia</div></div>
+        <div class="kpi"><div class="kpi-n">42</div><div class="kpi-l">Check-outs mes</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#aaa">Fuente: Checks.Total + Extras</div>
+    </div>
+    <div class="rep-card" style="grid-column:1/-1">
+      <div class="rep-title">👥 Historial de huéspedes · Consultar_historial_huéspedes</div>
+      <table class="tbl">
+        <thead><tr><th>id_huesped</th><th>Nombre</th><th>Nacionalidad</th><th>Estancias</th><th>Total acumulado</th><th>Última visita</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>Sofía Ramírez Vega</td><td>Mexicana</td><td>8</td><td>$110,400</td><td>2025-06-08</td></tr>
+          <tr><td>1</td><td>María González Ruiz</td><td>Mexicana</td><td>5</td><td>$42,000</td><td>2025-06-06</td></tr>
+          <tr><td>5</td><td>Ana Flores Torres</td><td>Mexicana</td><td>3</td><td>$14,500</td><td>2025-05-20</td></tr>
+          <tr><td>2</td><td>Carlos Mendoza López</td><td>Mexicana</td><td>2</td><td>$8,200</td><td>2025-06-07</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+var role='';
+var ACCESS={
+  rec:['login','huespedes','reserv','checkin','checkout'],
+  adm:['login','huespedes','reserv','checkin','checkout','hab','servicios','consumos','factura','reportes'],
+  limp:['login','hab','servicios'],
+  mant:['login','hab','servicios'],
+  ger:['login','reportes']
+};
+var LABELS={rec:'Recepcionista',adm:'Administrador',limp:'Personal Limpieza',mant:'Personal Mantenimiento',ger:'Gerente'};
+var COLORS={rec:'rgba(30,74,122,.4)',adm:'rgba(139,58,42,.4)',limp:'rgba(107,123,94,.4)',mant:'rgba(90,74,42,.4)',ger:'rgba(181,134,43,.4)'};
+var READONLY_HAB=['limp','mant'];
+var SERV_EDIT=['adm','limp','mant'];
+
+function setRole(r){
+  role=r;
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.toggle('on',b.dataset.r===r));
+  var badge=document.getElementById('role-badge');
+  badge.textContent=LABELS[r];
+  badge.style.background=COLORS[r];
+  badge.style.color='white';
+  applyAccess();
+}
+function setRoleFromLogin(v){if(v) role=v;}
+function loginAction(){if(role){applyAccess();go(ACCESS[role][1]||'login');} else go('login');}
+function quickLogin(r){setRole(r);go(ACCESS[r][1]||'login');}
+
+function applyAccess(){
+  var allowed=ACCESS[role]||[];
+  var nbMap={huespedes:'nb-huespedes',reserv:'nb-reserv',checkin:'nb-checkin',checkout:'nb-checkout',hab:'nb-hab',servicios:'nb-servicios',consumos:'nb-consumos',factura:'nb-factura',reportes:'nb-reportes'};
+  Object.keys(nbMap).forEach(function(k){
+    var el=document.getElementById(nbMap[k]);
+    if(el) el.classList.toggle('locked',allowed.indexOf(k)===-1);
+  });
+  // habitaciones: solo visualizar para limp/mant
+  var isReadonly=READONLY_HAB.indexOf(role)!==-1;
+  var notice=document.getElementById('hab-readonly-notice');
+  var crudSec=document.getElementById('hab-crud-section');
+  var hcardNew=document.getElementById('hcard-new');
+  if(notice) notice.style.display=isReadonly?'block':'none';
+  if(crudSec) crudSec.style.display=isReadonly?'none':'block';
+  if(hcardNew) hcardNew.style.display=isReadonly?'none':'flex';
+  // checkout extend buttons — solo admin
+  var isAdm=role==='adm';
+  var btnFact=document.getElementById('btn-gen-factura');
+  var btnCons=document.getElementById('btn-ver-consumos');
+  if(btnFact) btnFact.disabled=!isAdm;
+  if(btnCons) btnCons.disabled=!isAdm;
+  // servicios: limp/mant no pueden eliminar
+  var canDelServ=role==='adm';
+  var bds=document.getElementById('btn-elim-serv');
+  if(bds) bds.disabled=!canDelServ;
+}
+
+function go(id){
+  var allowed=ACCESS[role]||[];
+  var notice=document.getElementById('access-notice');
+  if(role && allowed.indexOf(id)===-1 && id!=='login'){
+    notice.classList.add('show');
+    return;
+  }
+  notice.classList.remove('show');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  var el=document.getElementById('s-'+id);
+  if(el) el.classList.add('on');
+  var ids=['login','huespedes','reserv','checkin','checkout','hab','servicios','consumos','factura','reportes'];
+  var nbs=document.querySelectorAll('.nb');
+  ids.forEach(function(k,i){nbs[i].classList.toggle('on',k===id);});
+}
+
+document.querySelectorAll('.fp').forEach(function(p){
+  p.addEventListener('click',function(){
+    var row=this.closest('.filter-row');
+    if(row) row.querySelectorAll('.fp').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on');
+  });
+});
+document.querySelectorAll('.tbl tbody tr').forEach(function(r){
+  r.addEventListener('click',function(){
+    var tb=this.closest('tbody');
+    if(tb) tb.querySelectorAll('tr').forEach(function(x){x.classList.remove('sel');});
+    this.classList.add('sel');
+  });
+});
+</script>
